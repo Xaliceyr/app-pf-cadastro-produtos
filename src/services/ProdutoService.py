@@ -10,15 +10,12 @@ class ProdutoService:
         except Exception as error:
             raise HTTPException(400, detail=error)
     
-    async def CriarDados(ProdutoModel: ProdutoModel):
+    async def CriarDados(ProdutoModel: ProdutoModel, idModel):
         try:
-            id = 1
+            id = idModel.number
             hub = {
                 "id": id,
                 "nome": ProdutoModel.nome,
-                "sobrenome": ProdutoModel.sobrenome,
-                "email": ProdutoModel.email,
-                "telefone": ProdutoModel.telefone,
                 "datacricao": datetime.now
             }
             Usuario.insert_one(hub)

@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field, field_validator
 
-class HubModel(BaseModel):
+class ProdutoModel(BaseModel):
     nome: str = Field(..., description="nome não pode ser nulo")
     preco: float = Field(..., description="")
 

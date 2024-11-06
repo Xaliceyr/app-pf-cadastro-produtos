@@ -7,4 +7,6 @@ banco = pymongo.MongoClient(url_database)
 db = banco['backoffice-iot']
 
 
-Produto = db.Produto 
+Produto = db.Produto
+Usuario = db.Usuario
+Patient = db.Patient

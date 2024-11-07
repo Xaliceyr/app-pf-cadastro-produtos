@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field, field_validator
-from typing import Optional
+
 
 class ProdutoModel(BaseModel):
     nome: str = Field(..., description="nome não pode ser nulo")

@@ -1,4 +1,4 @@
-from src.database.connection import Produtos
+from src.database.connection import Produto
 from src.models.ProdutoModel import ProdutoModel
 from src.models.idModel import number 
 from fastapi import HTTPException
@@ -8,13 +8,13 @@ from datetime import datetime
 class ProdutoService:
     async def ListarTodos() -> list:
         try:
-            return list(Produtos.find())
+            return list(Produto.find())
         except Exception as error:
             raise HTTPException(400, detail=error)
     
     async def CriarDados(produtoModel: ProdutoModel):
         try:
-            produto = {
+            Produto = {
                 "id": 2,
                 "nome": produtoModel.nome,
                 "preco": produtoModel.preco,
@@ -22,13 +22,13 @@ class ProdutoService:
                 "cor": produtoModel.cor,
                 "data_criacao": datetime.now()
             }
-            Produtos.insert_one(produto)
+            Produto.insert_one(Produto)
         except Exception as error:
             raise HTTPException(400, detail=error)
             
     async def Buscar(id):
         try:
-            return Produtos.find({"id": id})
+            return Produto.find({"id": id})
         except Exception as error:
             raise HTTPException(400, detail=error)
     
@@ -51,7 +51,7 @@ class ProdutoService:
             atualazar["data_atualizacao"] = datetime.now()
 
             if atualazar:
-                Produtos.update_one(
+                Produto.update_one(
                     { "id": id },
                     { 
                         "$set": atualazar
@@ -64,6 +64,6 @@ class ProdutoService:
         
     async def Excluir(id):
         try:
-            return Produtos.delete_one({"id": id})
+            return Produto.delete_one({"id": id})
         except Exception as error:
             raise HTTPException(400, detail=error)

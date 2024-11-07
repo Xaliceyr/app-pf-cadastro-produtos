@@ -4,7 +4,10 @@ from typing import Optional
 class ProdutoModel(BaseModel):
     nome: str = Field(..., description="nome não pode ser nulo")
     preco: float = Field(..., description="")
-    id: Optional[int] = None
+    quantidade: int = Field(..., description="")
+    cor: str
+    tamanho: str
+    validade: str
 
     @field_validator('preco')
     def preco_nao_ser_null(cls, value):

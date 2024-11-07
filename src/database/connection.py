@@ -1,12 +1,9 @@
 import pymongo
 
-url_database = 'mongodb+srv://rafaelcorrea:<db_password>@cluster0.5tbir.mongodb.net/'
+url_database = 'mongodb+srv://rafaelcorrea:jJv7LHgH56Wja2UB@cluster0.5tbir.mongodb.net/'
 
 banco = pymongo.MongoClient(url_database)
 #db = banco['db_produto']
-db = banco['backoffice-iot']
+db = banco['Grupo_2']
 
-
-Produto = db.Produto
-Usuario = db.Usuario
-Patient = db.Patient
+Produtos = db.Produto

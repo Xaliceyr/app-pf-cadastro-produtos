@@ -11,5 +11,18 @@ async def ListarTodos():
     return Resposta(resposta)
 
 @app_router.post('/criar', status_code=200)   
-async def CriarDados(ProdutoModel: ProdutoModel):
-    await ProdutoService.CriarDados(ProdutoModel)
+async def CriarDados(produtoModel: ProdutoModel):
+   return await ProdutoService.CriarDados(produtoModel)
+
+@app_router.get("/buscar/{id}", status_code=200)
+async def Buscar(id):
+    resposta = await ProdutoService.Buscar(id)
+    return Resposta(resposta)
+
+@app_router.put('/atualizar/{id}', status_code=200)   
+async def CriarDados(produtoModel: ProdutoModel):
+    await ProdutoService.AtualizarDados(produtoModel)
+    
+@app_router.delete('/excluir/{id}', status_code=200)   
+async def CriarDados(id):
+    await ProdutoService.Excluir(id)

@@ -10,11 +10,9 @@ async def ListarTodos():
     resposta = await ProdutoService.ListarTodos()
     return Resposta(resposta)
 
-<<<<<<< Updated upstream
 @app_router.post('/criar', status_code=200)   
 async def CriarDados(ProdutoModel: ProdutoModel):
     await ProdutoService.CriarDados(ProdutoModel)
-=======
 @app_router.get('/criar', status_code=200)   
 async def CriarDados(produtoModel: ProdutoModel):
     resposta = await ProdutoService.AdicionarEstoque(ProdutoModel)
@@ -33,4 +31,3 @@ async def CriarDados(produtoModel: ProdutoModel):
 @app_router.delete('/excluir/{id}', status_code=200)   
 async def CriarDados(id):
     await ProdutoService.Excluir(id)    
->>>>>>> Stashed changes

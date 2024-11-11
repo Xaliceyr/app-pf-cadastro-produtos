@@ -14,15 +14,18 @@ class ProdutoService:
     
     async def CriarDados(produtoModel: ProdutoModel):
         try:
-            Produto = {
-                "id": 2,
+            ultimo_Produto = Produto.find_one(sort=[("id", -1)])
+            id = ultimo_Produto["id"] + 1 if ultimo_Produto else 1
+            Novo_Produto = {
+                "id": id,
                 "nome": produtoModel.nome,
                 "preco": produtoModel.preco,
                 "quantidade": produtoModel.quantidade,
                 "cor": produtoModel.cor,
                 "data_criacao": datetime.now()
+                
             }
-            Produto.insert_one(Produto)
+            Produto.insert_one(Novo_Produto)
         except Exception as error:
             raise HTTPException(400, detail=error)
             
@@ -34,27 +37,28 @@ class ProdutoService:
     
     async def AtualizarDados(produtoModel: ProdutoModel, id: int):
         try:
-            atualazar = {}
+            atualizar = {}
 
             if produtoModel.nome:
-                atualazar["nome"] = produtoModel.nome
+                atualizar["nome"] = produtoModel.nome
 
-            if produtoModel.sobrenome:
-                atualazar["sobrenome"] = produtoModel.sobrenome
+            if produtoModel.preco:
+                atualizar["preco"] = produtoModel.preco
 
-            if produtoModel.email:
-                atualazar["email"] = produtoModel.email
+            if produtoModel.quantidade:
+                atualizar["quantidade"] = produtoModel.quantidade
 
-            if produtoModel.telefone:
-                atualazar["telefone"] = produtoModel.telefone
+            if produtoModel.cor:
+                atualizar["cor"] = produtoModel.cor
 
-            atualazar["data_atualizacao"] = datetime.now()
 
-            if atualazar:
+            atualizar["data_atualizacao"] = datetime.now()
+
+            if atualizar:
                 Produto.update_one(
                     { "id": id },
                     { 
-                        "$set": atualazar
+                        "$set": atualizar
                     }
                 )
             else:
@@ -62,8 +66,13 @@ class ProdutoService:
         except Exception as error:
             raise HTTPException(400, detail=str(error))
         
-    async def Excluir(id):
+
+        
+    async def Excluir(id: int):
         try:
-            return Produto.delete_one({"id": id})
+            resultado = Produto.delete_one({"id": id})
+            if resultado.deleted_count == 0:
+                raise HTTPException(status_code=404, detail="Produto não encontrado")
+            return {"message": "Produto removido com sucesso"}
         except Exception as error:
-            raise HTTPException(400, detail=error)
+            raise HTTPException(400, detail=str(error))

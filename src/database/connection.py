@@ -1,9 +1,9 @@
 import pymongo
 	
-url_database = 'mongodb+srv://rafaelcorrea:jJv7LHgH56Wja2UB@cluster0.5tbir.mongodb.net/'
+url_database = 'mongodb+srv://RafaelAlmeida:d93MTCe5D6llRn4B@grupo2.5tbir.mongodb.net/'
 
 banco = pymongo.MongoClient(url_database)
 #db = banco['db_produto']
-db = banco['Grupo_2']
+db = banco['Grupo2']
 
 Produto = db.Produto

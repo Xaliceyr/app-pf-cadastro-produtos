@@ -19,10 +19,13 @@ async def Buscar(id):
     resposta = await ProdutoService.Buscar(id)
     return Resposta(resposta)
 
+
 @app_router.put('/atualizar/{id}', status_code=200)   
-async def CriarDados(produtoModel: ProdutoModel):
-    await ProdutoService.AtualizarDados(produtoModel)
+async def AtualizarDados(produtoModel: ProdutoModel, id: int):
+    await ProdutoService.AtualizarDados(produtoModel, id)
     
+
 @app_router.delete('/excluir/{id}', status_code=200)   
-async def CriarDados(id):
+async def Excluir(id: int):
     await ProdutoService.Excluir(id)
+

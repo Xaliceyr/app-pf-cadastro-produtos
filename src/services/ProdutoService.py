@@ -1,86 +1,91 @@
-from src.database.connection import Produto  # Supondo que Produto seja a coleção do MongoDB
+from src.database.connection import Produto
 from src.models.ProdutoModel import ProdutoModel
-from bson import ObjectId
+from src.models.idModel import number 
 from fastapi import HTTPException
 from datetime import datetime
+from typing import Optional
 
 class ProdutoService:
-    # Método para listar todos os produtos
     async def ListarTodos() -> list:
         try:
-            # Retorna uma lista de produtos da coleção Produto
             return list(Produto.find())
         except Exception as error:
-            raise HTTPException(400, detail=str(error))
+            raise HTTPException(400, detail=error)
     
-    # Método para criar um novo produto
     async def CriarDados(produtoModel: ProdutoModel):
         try:
-            # Criando um novo produto com dados do produtoModel
-            novo_produto = {
-                "id": str(ObjectId()),  # Gerando um id único para o produto
+            ultimo_Produto = Produto.find_one(sort=[("id", -1)])
+            id = ultimo_Produto["id"] + 1 if ultimo_Produto else 1
+            Novo_Produto = {
+                "id": id,
                 "nome": produtoModel.nome,
                 "preco": produtoModel.preco,
                 "quantidade": produtoModel.quantidade,
                 "cor": produtoModel.cor,
                 "data_criacao": datetime.now()
+                
             }
-            Produto.insert_one(novo_produto)  # Inserindo o produto na coleção
+            Produto.insert_one(Novo_Produto)
         except Exception as error:
-            raise HTTPException(400, detail=str(error))
+            raise HTTPException(400, detail=error)
             
-    # Método para buscar um produto pelo id
-    async def Buscar(id: str):
-        try:
-            # Retorna um único produto com o id fornecido
-            produto = Produto.find_one({"id": id})
-            if produto is None:
-                raise HTTPException(404, detail="Produto não encontrado.")
-            return produto
-        except Exception as error:
-            raise HTTPException(400, detail=str(error))
-    
-    # Método para atualizar os dados de um produto
-    async def AtualizarDados(produtoModel: ProdutoModel, id: str):
-        try:
-            # Dicionário para armazenar os campos a serem atualizados
-            atualizacao = {}
+    async def Buscar(
+            id: Optional[int] = None,
+            preco_minimo: Optional[float] = None,
+            preco_maximo: Optional[float] = None,
+    ):
+            try:
+                filtro = {}
+                if id :
+                    filtro["id"] = id
+                if preco_minimo :
+                    filtro["preco"] = {"$gte": preco_minimo}
+                if preco_maximo :
+                    filtro["preco"] = {"$lte": preco_maximo}
+                return list(Produto.find(filtro))
 
-            # Atualiza apenas os campos que foram preenchidos no modelo
+            
+            except Exception as error:
+                raise HTTPException(400, detail=error)
+    
+    async def AtualizarDados(produtoModel: ProdutoModel, id: int):
+        try:
+            atualizar = {}
+
             if produtoModel.nome:
-                atualizacao["nome"] = produtoModel.nome
+                atualizar["nome"] = produtoModel.nome
 
             if produtoModel.preco:
-                atualizacao["preco"] = produtoModel.preco
+                atualizar["preco"] = produtoModel.preco
 
             if produtoModel.quantidade:
-                atualizacao["quantidade"] = produtoModel.quantidade
+                atualizar["quantidade"] = produtoModel.quantidade
 
             if produtoModel.cor:
-                atualizacao["cor"] = produtoModel.cor
+                atualizar["cor"] = produtoModel.cor
 
-            atualizacao["data_atualizacao"] = datetime.now()  # Atualiza a data de modificação
 
-            if atualizacao:
-                # Realiza a atualização no banco de dados
-                resultado = Produto.update_one(
-                    {"id": id},
-                    {"$set": atualizacao}
+            atualizar["data_atualizacao"] = datetime.now()
+
+            if atualizar:
+                Produto.update_one(
+                    { "id": id },
+                    { 
+                        "$set": atualizar
+                    }
                 )
-                if resultado.matched_count == 0:
-                    raise HTTPException(404, detail="Produto não encontrado para atualização.")
             else:
                 raise HTTPException(400, detail="Nenhum campo foi preenchido para atualização.")
         except Exception as error:
             raise HTTPException(400, detail=str(error))
         
-    # Método para excluir um produto
-    async def Excluir(id: str):
+
+        
+    async def Excluir(id: int):
         try:
-            # Realiza a exclusão do produto
             resultado = Produto.delete_one({"id": id})
             if resultado.deleted_count == 0:
-                raise HTTPException(404, detail="Produto não encontrado para exclusão.")
-            return {"message": "Produto excluído com sucesso."}
+                raise HTTPException(status_code=404, detail="Produto não encontrado")
+            return {"message": "Produto removido com sucesso"}
         except Exception as error:
             raise HTTPException(400, detail=str(error))

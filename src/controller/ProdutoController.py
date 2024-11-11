@@ -1,7 +1,8 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter
 from src.models.ProdutoModel import ProdutoModel 
 from src.services.ProdutoService import ProdutoService
 from src.models.respostasModel import Resposta
+from typing import Optional
 
 app_router = APIRouter(prefix="/produto")
 
@@ -11,23 +12,25 @@ async def ListarTodos():
     return Resposta(resposta)
 
 @app_router.post('/criar', status_code=200)   
-async def CriarDados(ProdutoModel: ProdutoModel):
-    await ProdutoService.CriarDados(ProdutoModel)
-@app_router.get('/criar', status_code=200)   
 async def CriarDados(produtoModel: ProdutoModel):
-    resposta = await ProdutoService.AdicionarEstoque(ProdutoModel)
-    return Resposta(resposta)
-   
-@app_router.get("/buscar/{id}", status_code=200)
-async def Buscar(id):
-    resposta = await ProdutoService.Buscar(id, 0)
+   return await ProdutoService.CriarDados(produtoModel)
+
+@app_router.get("/buscar", status_code=200)
+async def Buscar(
+    id: Optional[int] = None,
+    preco_minimo: Optional[float] = None,
+    preco_maximo: Optional[float] = None
+):
+    resposta = await ProdutoService.Buscar(id=id, preco_minimo=preco_minimo, preco_maximo=preco_maximo)
     return Resposta(resposta)
 
+
 @app_router.put('/atualizar/{id}', status_code=200)   
-async def CriarDados(produtoModel: ProdutoModel):
-    await ProdutoService.AtualizarDados(produtoModel)
+async def AtualizarDados(produtoModel: ProdutoModel, id: int):
+    await ProdutoService.AtualizarDados(produtoModel, id)
     
 
 @app_router.delete('/excluir/{id}', status_code=200)   
-async def CriarDados(id):
-    await ProdutoService.Excluir(id)    
+async def Excluir(id: int):
+    await ProdutoService.Excluir(id)
+

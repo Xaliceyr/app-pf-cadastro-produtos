@@ -24,6 +24,11 @@ async def Buscar(
     resposta = await ProdutoService.Buscar(id=id, preco_minimo=preco_minimo, preco_maximo=preco_maximo)
     return Resposta(resposta)
 
+@app_router.get("/listCategoria/{categoria}", status_code=200)
+async def ListarCategoria(categoria: Optional[str] = None):  
+    resposta = await ProdutoService.ListarCategoria(categoria=categoria)  
+    return Resposta(resposta)
+
 
 @app_router.put('/atualizar/{id}', status_code=200)   
 async def AtualizarDados(produtoModel: ProdutoModel, id: int):

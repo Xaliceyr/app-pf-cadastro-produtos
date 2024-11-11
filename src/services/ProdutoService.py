@@ -20,12 +20,15 @@ class ProdutoService:
                 "id": id,
                 "nome": produtoModel.nome,
                 "preco": produtoModel.preco,
+                "categoria": produtoModel.categoria,
                 "quantidade": produtoModel.quantidade,
                 "cor": produtoModel.cor,
                 "data_criacao": datetime.now()
                 
             }
             Produto.insert_one(Novo_Produto)
+            return {"message": "Produto cadastrado com sucesso"}
+ 
         except Exception as error:
             raise HTTPException(400, detail=error)
             
@@ -48,6 +51,23 @@ class ProdutoService:
             except Exception as error:
                 raise HTTPException(400, detail=error)
     
+    
+    async def ListarCategoria(categoria: str) -> list:
+        try:
+            filtro = {}
+            
+            if categoria:
+                filtro["categoria"] = categoria
+            produtos = list(Produto.find(filtro))
+            if not produtos:
+                return {"message": "Nenhum produto encontrado para a categoria especificada."}
+            return produtos
+        
+        except Exception as error:
+            raise HTTPException(400, detail=str(error))
+
+    
+    
     async def AtualizarDados(produtoModel: ProdutoModel, id: int):
         try:
             atualizar = {}
@@ -57,6 +77,9 @@ class ProdutoService:
 
             if produtoModel.preco:
                 atualizar["preco"] = produtoModel.preco
+
+            if produtoModel.categoria:
+                atualizar["categoria"] = produtoModel.categoria
 
             if produtoModel.quantidade:
                 atualizar["quantidade"] = produtoModel.quantidade

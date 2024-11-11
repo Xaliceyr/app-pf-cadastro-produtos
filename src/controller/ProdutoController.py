@@ -2,6 +2,7 @@ from fastapi import APIRouter
 from src.models.ProdutoModel import ProdutoModel 
 from src.services.ProdutoService import ProdutoService
 from src.models.respostasModel import Resposta
+from typing import Optional
 
 app_router = APIRouter(prefix="/produto")
 
@@ -14,9 +15,18 @@ async def ListarTodos():
 async def CriarDados(produtoModel: ProdutoModel):
    return await ProdutoService.CriarDados(produtoModel)
 
-@app_router.get("/buscar/{id}", status_code=200)
-async def Buscar(id):
-    resposta = await ProdutoService.Buscar(id)
+@app_router.get("/buscar", status_code=200)
+async def Buscar(
+    id: Optional[int] = None,
+    preco_minimo: Optional[float] = None,
+    preco_maximo: Optional[float] = None
+):
+    resposta = await ProdutoService.Buscar(id=id, preco_minimo=preco_minimo, preco_maximo=preco_maximo)
+    return Resposta(resposta)
+
+@app_router.get("/listCategoria/{categoria}", status_code=200)
+async def ListarCategoria(categoria: Optional[str] = None):  
+    resposta = await ProdutoService.ListarCategoria(categoria=categoria)  
     return Resposta(resposta)
 
 

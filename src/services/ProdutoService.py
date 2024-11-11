@@ -3,7 +3,7 @@ from src.models.ProdutoModel import ProdutoModel
 from src.models.idModel import number 
 from fastapi import HTTPException
 from datetime import datetime
-
+from typing import Optional
 
 class ProdutoService:
     async def ListarTodos() -> list:
@@ -20,20 +20,53 @@ class ProdutoService:
                 "id": id,
                 "nome": produtoModel.nome,
                 "preco": produtoModel.preco,
+                "categoria": produtoModel.categoria,
                 "quantidade": produtoModel.quantidade,
                 "cor": produtoModel.cor,
                 "data_criacao": datetime.now()
                 
             }
             Produto.insert_one(Novo_Produto)
+            return {"message": "Produto cadastrado com sucesso"}
+ 
         except Exception as error:
             raise HTTPException(400, detail=error)
             
-    async def Buscar(id):
+    async def Buscar(
+            id: Optional[int] = None,
+            preco_minimo: Optional[float] = None,
+            preco_maximo: Optional[float] = None,
+    ):
+            try:
+                filtro = {}
+                if id :
+                    filtro["id"] = id
+                if preco_minimo :
+                    filtro["preco"] = {"$gte": preco_minimo}
+                if preco_maximo :
+                    filtro["preco"] = {"$lte": preco_maximo}
+                return list(Produto.find(filtro))
+
+            
+            except Exception as error:
+                raise HTTPException(400, detail=error)
+    
+    
+    async def ListarCategoria(categoria: str) -> list:
         try:
-            return Produto.find({"id": id})
+            filtro = {}
+            
+            if categoria:
+                filtro["categoria"] = categoria
+            produtos = list(Produto.find(filtro))
+            if not produtos:
+                return {"message": "Nenhum produto encontrado para a categoria especificada."}
+            return produtos
+        
         except Exception as error:
-            raise HTTPException(400, detail=error)
+            raise HTTPException(400, detail=str(error))
+
+    
     
     async def AtualizarDados(produtoModel: ProdutoModel, id: int):
         try:
@@ -44,6 +77,9 @@ class ProdutoService:
 
             if produtoModel.preco:
                 atualizar["preco"] = produtoModel.preco
+
+            if produtoModel.categoria:
+                atualizar["categoria"] = produtoModel.categoria
 
             if produtoModel.quantidade:
                 atualizar["quantidade"] = produtoModel.quantidade

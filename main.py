@@ -1,5 +1,5 @@
 from fastapi import FastAPI, APIRouter
-from src.controller.ProductController import app_router
+from src.controller.ProdutoController import app_router
 
 router = APIRouter()
 app = FastAPI()

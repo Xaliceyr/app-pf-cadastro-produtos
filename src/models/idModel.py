@@ -1,6 +1,9 @@
-from src.database.connection import Patient
+from src.database.connection import Produto
 
-number = Patient.estimated_document_count()
-print(number)
-if number >= 1:
-    number += 1
+def number ():
+    number = Produto.estimated_document_count()
+    print(number)
+    if number >= 1:
+        number += 1
+
+    return number
